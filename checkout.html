@@ -412,23 +412,22 @@ document.addEventListener('DOMContentLoaded', async () => {
           units: item.qty,
           price: (item.price * item.qty).toLocaleString() + ' جنيه'
         }));
-        await emailjs.send('service_azkpyi2', 'template_xq5umgh', {
-          order_id: order.id,
-          email: 'thetwinseg@gmail.com',
-          customer_name: order.customer.name,
-          customer_phone: order.customer.phone,
+        const shipPrice = ship ? ship.price.toLocaleString() + ' جنيه' : '0 جنيه';
+        const emailResult = await emailjs.send('service_azkpyi2', 'template_xq5umgh', {
+          order_id:         order.id,
+          email:            'thetwinseg@gmail.com',
+          customer_name:    order.customer.name,
+          customer_phone:   order.customer.phone,
           customer_address: order.customer.address + ' — ' + order.customer.city,
-          orders: emailItems,
-          cost: {
-            shipping: ship ? ship.price.toLocaleString() + ' جنيه' : '0 جنيه',
-            tax: '0 جنيه'
-          },
-          total: total.toLocaleString() + ' جنيه',
-          payment_method: paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'
+          orders:           emailItems,
+          shipping_price:   shipPrice,
+          tax_price:        '0 جنيه',
+          total:            total.toLocaleString() + ' جنيه',
+          payment_method:   paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'
         });
-        console.log('✅ Order email sent to thetwinseg@gmail.com');
+        console.log('✅ Order email sent! Status:', emailResult.status, emailResult.text);
       } catch (emailErr) {
-        console.warn('⚠️ Email send failed (order still placed):', emailErr);
+        console.error('❌ EmailJS error:', JSON.stringify(emailErr));
       }
 
       cartClear();
