@@ -8,6 +8,9 @@
   <meta name="robots" content="noindex, nofollow"/>
   <link rel="stylesheet" href="./src/css/style.css"/>
   <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.js"></script>
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script>emailjs.init("9e2yOAR_XiDnAIdHk");</script>
 </head>
 <body>
 
@@ -400,7 +403,34 @@ document.addEventListener('DOMContentLoaded', async () => {
       paymentMethod
     };
     try { 
-      const res = await apiCreateOrder(apiPayload); 
+      const res = await apiCreateOrder(apiPayload);
+
+      // ── إرسال إيميل للإدارة عبر EmailJS ──
+      try {
+        const emailItems = cart.map(item => ({
+          name: item.name + (item.size ? ` (${item.size})` : '') + (item.type ? ` · ${item.type}` : '') + (item.roast ? ` · ${item.roast}` : ''),
+          units: item.qty,
+          price: (item.price * item.qty).toLocaleString() + ' جنيه'
+        }));
+        await emailjs.send('service_azkpyi2', 'template_xq5umgh', {
+          order_id: order.id,
+          email: 'thetwinseg@gmail.com',
+          customer_name: order.customer.name,
+          customer_phone: order.customer.phone,
+          customer_address: order.customer.address + ' — ' + order.customer.city,
+          orders: emailItems,
+          cost: {
+            shipping: ship ? ship.price.toLocaleString() + ' جنيه' : '0 جنيه',
+            tax: '0 جنيه'
+          },
+          total: total.toLocaleString() + ' جنيه',
+          payment_method: paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'
+        });
+        console.log('✅ Order email sent to thetwinseg@gmail.com');
+      } catch (emailErr) {
+        console.warn('⚠️ Email send failed (order still placed):', emailErr);
+      }
+
       cartClear();
       document.getElementById('co-main').classList.add('hidden');
       document.getElementById('co-success').classList.remove('hidden');
