@@ -8,9 +8,7 @@
   <meta name="robots" content="noindex, nofollow"/>
   <link rel="stylesheet" href="./src/css/style.css"/>
   <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.js"></script>
-  <!-- EmailJS -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <script>emailjs.init("9e2yOAR_XiDnAIdHk");</script>
+  <!-- EmailJS via direct REST API -->
 </head>
 <body>
 
@@ -405,29 +403,46 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { 
       const res = await apiCreateOrder(apiPayload);
 
-      // ── إرسال إيميل للإدارة عبر EmailJS ──
+      // ── إرسال إيميل للإدارة عبر EmailJS REST API ──
       try {
         const emailItems = cart.map(item => ({
-          name: item.name + (item.size ? ` (${item.size})` : '') + (item.type ? ` · ${item.type}` : '') + (item.roast ? ` · ${item.roast}` : ''),
-          units: item.qty,
+          name:  item.name + (item.size ? ` (${item.size})` : '') + (item.type ? ` · ${item.type}` : '') + (item.roast ? ` · ${item.roast}` : ''),
+          units: String(item.qty),
           price: (item.price * item.qty).toLocaleString() + ' جنيه'
         }));
         const shipPrice = ship ? ship.price.toLocaleString() + ' جنيه' : '0 جنيه';
-        const emailResult = await emailjs.send('service_azkpyi2', 'template_xq5umgh', {
-          order_id:         order.id,
-          email:            'thetwinseg@gmail.com',
-          customer_name:    order.customer.name,
-          customer_phone:   order.customer.phone,
-          customer_address: order.customer.address + ' — ' + order.customer.city,
-          orders:           emailItems,
-          shipping_price:   shipPrice,
-          tax_price:        '0 جنيه',
-          total:            total.toLocaleString() + ' جنيه',
-          payment_method:   paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'
+
+        const emailPayload = {
+          service_id:  'service_azkpyi2',
+          template_id: 'template_xq5umgh',
+          user_id:     '9e2yOAR_XiDnAIdHk',
+          template_params: {
+            order_id:         String(order.id),
+            email:            'thetwinseg@gmail.com',
+            customer_name:    order.customer.name,
+            customer_phone:   order.customer.phone,
+            customer_address: order.customer.address + ' — ' + order.customer.city,
+            orders:           emailItems,
+            shipping_price:   shipPrice,
+            total:            total.toLocaleString() + ' جنيه',
+            payment_method:   paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'
+          }
+        };
+
+        const emailRes = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(emailPayload)
         });
-        console.log('✅ Order email sent! Status:', emailResult.status, emailResult.text);
+
+        if (emailRes.ok) {
+          console.log('✅ Order email sent successfully to thetwinseg@gmail.com');
+        } else {
+          const errText = await emailRes.text();
+          console.error('❌ EmailJS API error:', emailRes.status, errText);
+        }
       } catch (emailErr) {
-        console.error('❌ EmailJS error:', JSON.stringify(emailErr));
+        console.error('❌ Email fetch failed:', emailErr.message);
       }
 
       cartClear();
