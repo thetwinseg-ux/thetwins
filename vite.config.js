@@ -12,7 +12,9 @@ export default defineConfig({
         { src: '*.ico', dest: '' },
         { src: 'sitemap.xml', dest: '' },
         { src: 'robots.txt', dest: '' },
-        { src: 'google*.html', dest: '' }
+        { src: 'google*.html', dest: '' },
+        { src: 'vercel.json', dest: '' },
+        { src: '_redirects', dest: '' }
       ]
     })
   ],

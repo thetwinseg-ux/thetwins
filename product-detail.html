@@ -116,7 +116,7 @@
   <div class="drawer-body" id="drawer-body"></div>
   <div class="drawer-foot">
     <div class="drawer-subtotal"><span>Subtotal</span><span id="drawer-subtotal">0 جنيه</span></div>
-    <a href="checkout.html" class="btn btn-gold btn-full btn-lg" onclick="closeCartDrawer()">Checkout →</a>
+    <a href="/checkout" class="btn btn-gold btn-full btn-lg" onclick="closeCartDrawer()">Checkout →</a>
     <div class="drawer-trust"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="13" height="13"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg> Secure Checkout &nbsp;·&nbsp; Free Returns</div>
   </div>
 </div>
@@ -149,31 +149,31 @@
 <!-- ══ NAVBAR ══ -->
 <nav class="navbar scrolled" id="navbar">
   <div class="nav-inner">
-    <a href="index.html" class="nav-logo">
+    <a href="/" class="nav-logo">
       <img src="./logo.png" alt="The Twins Coffee Logo" class="nav-logo-img"/>
       <span class="logo-text">THE TWINS COFFEE<sup>®</sup></span>
     </a>
     <ul class="nav-links" id="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="products.html">Shop</a></li>
+      <li><a href="/">Home</a></li>
+      <li><a href="/products">Shop</a></li>
       <li class="has-dropdown">
-        <a href="index.html#categories" class="dropdown-toggle">Categories <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:2px;vertical-align:middle"><path d="M6 9l6 6 6-6"/></svg></a>
+        <a href="/#categories" class="dropdown-toggle">Categories <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:2px;vertical-align:middle"><path d="M6 9l6 6 6-6"/></svg></a>
         <div class="mega-menu">
           <div class="mega-menu-inner">
             <div class="mega-col">
               <h4>COFFEE</h4>
-              <a href="products.html?category=turkish-coffee">TURKISH COFFEE (قهوة تركي)</a>
-              <a href="products.html?category=espresso">ESPRESSO (قهوة اسبريسو)</a>
+              <a href="/products?category=turkish-coffee">TURKISH COFFEE (قهوة تركي)</a>
+              <a href="/products?category=espresso">ESPRESSO (قهوة اسبريسو)</a>
             </div>
             <div class="mega-col">
               <h4>MERCH</h4>
-              <a href="products.html?category=cups">CUPS (أكواب)</a>
+              <a href="/products?category=cups">CUPS (أكواب)</a>
             </div>
           </div>
         </div>
       </li>
-      <li><a href="index.html#bestsellers">Best Sellers</a></li>
-      <li><a href="products.html">About</a></li>
+      <li><a href="/#bestsellers">Best Sellers</a></li>
+      <li><a href="/products">About</a></li>
     </ul>
     <div class="nav-actions">
       <!-- Search removed -->
@@ -192,7 +192,7 @@
 
 <!-- ══ PRODUCT DETAIL ══ -->
 <main class="pd-page" id="pd-page">
-  <a href="products.html" class="pd-back">
+  <a href="/products" class="pd-back">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="14" height="14" style="display:inline;margin-right:.3rem"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
     Back to Products
   </a>
@@ -323,7 +323,7 @@
 <!-- Not found -->
 <div id="not-found" class="hidden" style="text-align:center;padding:calc(var(--nav-h)+4rem) 2rem 6rem;color:var(--txt2)">
   <p style="font-size:1.1rem;margin-bottom:1rem">Product not found.</p>
-  <a href="products.html" class="btn btn-gold btn-lg">Browse Products</a>
+  <a href="/products" class="btn btn-gold btn-lg">Browse Products</a>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -358,6 +358,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (src.startsWith('uploads/') || src.startsWith('/uploads/') || src.startsWith('http')) return src;
     return 'uploads/' + src;
   }
+
 
   // Normalize all image paths in product
   if (product && product.images) {
@@ -668,7 +669,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const safeName = escapeHtml(p.name);
         const price = p.sizes && p.sizes.length > 0 ? Math.min(...p.sizes.map(s => s.price)) : 0;
         return `
-          <a href="product-detail.html?id=${p.id}" class="related-card">
+          <a href="/product-detail?id=${p.id}" class="related-card">
             <div class="related-card-img"><img src="${img}" alt="${safeName}" loading="lazy"/></div>
             <div class="related-card-name">${safeName}</div>
             <div class="related-card-price">${price} EGP</div>

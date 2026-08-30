@@ -55,7 +55,7 @@
   <div class="drawer-body" id="drawer-body"></div>
   <div class="drawer-foot">
     <div class="drawer-subtotal"><span>Subtotal</span><span id="drawer-subtotal">0 جنيه</span></div>
-    <a href="checkout.html" class="btn btn-gold btn-full btn-lg" onclick="closeCartDrawer()">Checkout →</a>
+    <a href="/checkout" class="btn btn-gold btn-full btn-lg" onclick="closeCartDrawer()">Checkout →</a>
     <div class="drawer-trust">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="13" height="13"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
       Secure Checkout &nbsp;·&nbsp; Free Returns
@@ -91,31 +91,31 @@
 <!-- ══ NAVBAR ══ -->
 <nav class="navbar scrolled" id="navbar">
   <div class="nav-inner">
-    <a href="index.html" class="nav-logo">
+    <a href="/" class="nav-logo">
       <img src="./logo.png" alt="The Twins Coffee Logo" class="nav-logo-img"/>
       <span class="logo-text">THE TWINS COFFEE<sup>®</sup></span>
     </a>
     <ul class="nav-links" id="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="products.html" class="active">Shop</a></li>
+      <li><a href="/">Home</a></li>
+      <li><a href="/products" class="active">Shop</a></li>
       <li class="has-dropdown">
-        <a href="index.html#categories" class="dropdown-toggle">Categories <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:2px;vertical-align:middle"><path d="M6 9l6 6 6-6"/></svg></a>
+        <a href="/#categories" class="dropdown-toggle">Categories <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:2px;vertical-align:middle"><path d="M6 9l6 6 6-6"/></svg></a>
         <div class="mega-menu">
           <div class="mega-menu-inner">
             <div class="mega-col">
               <h4>COFFEE</h4>
-              <a href="products.html?category=turkish-coffee">TURKISH COFFEE (قهوة تركي)</a>
-              <a href="products.html?category=espresso">ESPRESSO (قهوة اسبريسو)</a>
+              <a href="/products?category=turkish-coffee">TURKISH COFFEE (قهوة تركي)</a>
+              <a href="/products?category=espresso">ESPRESSO (قهوة اسبريسو)</a>
             </div>
             <div class="mega-col">
               <h4>MERCH</h4>
-              <a href="products.html?category=cups">CUPS (أكواب)</a>
+              <a href="/products?category=cups">CUPS (أكواب)</a>
             </div>
           </div>
         </div>
       </li>
-      <li><a href="index.html#bestsellers">Best Sellers</a></li>
-      <li><a href="products.html">About</a></li>
+      <li><a href="/#bestsellers">Best Sellers</a></li>
+      <li><a href="/products">About</a></li>
     </ul>
     <div class="nav-actions">
       <!-- Search removed -->
@@ -269,8 +269,8 @@
         <a href="https://www.instagram.com/thetwinseg" class="social-btn ig-btn" aria-label="Instagram" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="15" height="15"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" stroke-width="2"/><path stroke-width="2" d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" stroke-width="2"/></svg></a>
       </div>
     </div>
-    <div class="f-col"><h4>Quick Links</h4><a href="index.html">Home</a><a href="products.html">Shop</a><a href="index.html#story">About</a></div>
-    <div class="f-col"><h4>Shop</h4><a href="products.html?cat=coffee">Coffee</a><a href="products.html?cat=merch">Merchandise</a></div>
+    <div class="f-col"><h4>Quick Links</h4><a href="/">Home</a><a href="/products">Shop</a><a href="/#faq">About</a></div>
+    <div class="f-col"><h4>Shop</h4><a href="/products?cat=coffee">Coffee</a><a href="/products?cat=merch">Merchandise</a></div>
     <div class="f-col">
       <h4>Contact</h4>
       <div class="contact-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="15" height="15"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg><span>Thetwinseg@outlook.com</span></div>
@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const safeCatName = escapeHtml(catName);
 
       const card = document.createElement('a');
-      card.href = `product-detail.html?id=${p.id}`;
+      card.href = `/product-detail?id=${p.id}`;
       card.className = `p-card anim-up${outOfStock ? ' out' : ''}`;
       card.innerHTML = `
         <div class="p-card-img">

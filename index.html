@@ -158,25 +158,25 @@
 <!-- ══ NAVBAR ══ -->
 <nav class="navbar" id="navbar">
   <div class="nav-inner">
-    <a href="index.html" class="nav-logo">
+    <a href="/" class="nav-logo">
       <img src="./logo.png" alt="The Twins Coffee Logo" class="nav-logo-img"/>
       <span class="logo-text">THE TWINS COFFEE<sup>®</sup></span>
     </a>
     <ul class="nav-links" id="nav-links">
-      <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="products.html">Shop</a></li>
+      <li><a href="/" class="active">Home</a></li>
+      <li><a href="/products">Shop</a></li>
       <li class="has-dropdown">
         <a href="#categories" class="dropdown-toggle">Categories <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:2px;vertical-align:middle"><path d="M6 9l6 6 6-6"/></svg></a>
         <div class="mega-menu">
           <div class="mega-menu-inner">
             <div class="mega-col">
               <h4>COFFEE</h4>
-              <a href="products.html?category=turkish-coffee">TURKISH COFFEE (قهوة تركي)</a>
-              <a href="products.html?category=espresso">ESPRESSO (قهوة اسبريسو)</a>
+              <a href="/products?category=turkish-coffee">TURKISH COFFEE (قهوة تركي)</a>
+              <a href="/products?category=espresso">ESPRESSO (قهوة اسبريسو)</a>
             </div>
             <div class="mega-col">
               <h4>MERCH</h4>
-              <a href="products.html?category=cups">CUPS (أكواب)</a>
+              <a href="/products?category=cups">CUPS (أكواب)</a>
             </div>
           </div>
         </div>
@@ -252,7 +252,7 @@
       <!-- loaded by JS -->
     </div>
     <div style="text-align:center; margin-top:3rem;">
-      <a href="products.html" class="btn btn-dark btn-xl" style="padding: 1rem 4rem; letter-spacing: 0.15em;">VIEW ALL PRODUCTS</a>
+      <a href="/products" class="btn btn-dark btn-xl" style="padding: 1rem 4rem; letter-spacing: 0.15em;">VIEW ALL PRODUCTS</a>
     </div>
   </div>
 </section>
@@ -343,13 +343,13 @@
 <footer class="footer">
   <div class="footer-grid container">
     <div class="footer-brand">
-      <div class="nav-logo"><img src="./logo.png" alt="The Twins Coffee Logo" class="nav-logo-img"/><span class="logo-text">THE TWINS COFFEE<sup>®</sup></span></div>
+      <div class="nav-logo"><a href="/" style="display:inline-flex;align-items:center;gap:0.75rem;text-decoration:none;"><img src="./logo.png" alt="The Twins Coffee Logo" class="nav-logo-img"/><span class="logo-text">THE TWINS COFFEE<sup>®</sup></span></a></div>
       <p>Premium 100% Arabica Turkish Coffee.<br/>Crafted for the perfect cup, every time.</p>
     </div>
     <div class="f-col">
       <h4>Quick Links</h4>
-      <a href="index.html">Home</a>
-      <a href="products.html">Shop</a>
+      <a href="/">Home</a>
+      <a href="/products">Shop</a>
       <a href="#categories">Categories</a>
       <a href="#bestsellers">Best Sellers</a>
     </div>
@@ -516,15 +516,15 @@ document.getElementById('night-toggle').addEventListener('click', function() {
       const safeBadge = p.badge ? escapeHtml(p.badge) : '';
       html += `
         <div class="p-card">
-          <a href="product-detail.html?id=${p.id}" class="p-card-img-wrap">
+          <a href="/product-detail?id=${p.id}" class="p-card-img-wrap">
             <img src="${img}" alt="${safeName}" class="p-card-img"/>
             ${safeBadge ? `<span class="badge">${safeBadge}</span>` : ''}
           </a>
           <div class="p-card-info">
-            <h3 class="p-card-title"><a href="product-detail.html?id=${p.id}">${safeName}</a></h3>
+            <h3 class="p-card-title"><a href="/product-detail?id=${p.id}">${safeName}</a></h3>
             <div class="p-card-price">${price} EGP</div>
             <div class="p-card-rating">★★★★★ (12)</div>
-            <button class="btn btn-outline btn-full" aria-label="Add ${safeName} to Cart" onclick="window.location.href='product-detail.html?id=${p.id}'">Add to Cart</button>
+            <button class="btn btn-outline btn-full" aria-label="Add ${safeName} to Cart" onclick="window.location.href='/product-detail?id=${p.id}'">Add to Cart</button>
           </div>
         </div>
       `;
@@ -623,7 +623,7 @@ document.getElementById('night-toggle').addEventListener('click', function() {
       };
       bsNext.onclick = () => {
         if(singleSetWidth === 0) return;
-        position += 300;
+        position += 300; 
       };
     }
   }
@@ -637,7 +637,7 @@ document.getElementById('night-toggle').addEventListener('click', function() {
       const img = p.images && p.images.length > 0 ? fixImgPath(p.images[0]) : '';
       const safeName = escapeHtml(p.name);
       edGrid.innerHTML += `
-        <a href="product-detail.html?id=${p.id}" class="ed-card">
+        <a href="/product-detail?id=${p.id}" class="ed-card">
           <div class="ed-img"><img src="${img}" alt="${safeName}"/></div>
           <div class="ed-content">
             <h3>${safeName}</h3>
@@ -661,15 +661,15 @@ document.getElementById('night-toggle').addEventListener('click', function() {
         
         return `
           <div class="p-card">
-            <a href="product-detail.html?id=${p.id}" class="p-card-img-wrap">
+            <a href="/product-detail?id=${p.id}" class="p-card-img-wrap">
               <img src="${img}" alt="${safeName}" class="p-card-img" loading="lazy"/>
               ${safeBadge ? `<span class="badge">${safeBadge}</span>` : ''}
             </a>
             <div class="p-card-info">
-              <h3 class="p-card-title"><a href="product-detail.html?id=${p.id}">${safeName}</a></h3>
+              <h3 class="p-card-title"><a href="/product-detail?id=${p.id}">${safeName}</a></h3>
               <div class="p-card-price">${price} EGP</div>
               <div class="p-card-rating">★★★★★ (12)</div>
-              <button class="btn btn-outline btn-full" onclick="window.location.href='product-detail.html?id=${p.id}'">Add to Cart</button>
+              <button class="btn btn-outline btn-full" onclick="window.location.href='/product-detail?id=${p.id}'">Add to Cart</button>
             </div>
           </div>
         `;
@@ -686,7 +686,7 @@ document.getElementById('night-toggle').addEventListener('click', function() {
           const img = c.image ? fixImgPath(c.image) : './logo.png';
           const safeName = escapeHtml(c.name);
           return `
-            <a href="products.html?cat=${encodeURIComponent(c.slug || c.id)}" class="icon-nav-item">
+            <a href="/products?cat=${encodeURIComponent(c.slug || c.id)}" class="icon-nav-item">
               <div class="icon-nav-img"><img src="${img}" alt="${safeName}"/></div>
               <span class="icon-nav-name">${safeName}</span>
             </a>
