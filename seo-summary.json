@@ -1,0 +1,41 @@
+{
+  "bestOgImage": "https://bgijvwneyxrgrugxeyor.supabase.co/storage/v1/object/public/product-images/1786953084053-b0c392ff-8cbf-4eb1-b430-512d514bf49d.png",
+  "totalProducts": 7,
+  "products": [
+    {
+      "id": 11,
+      "name": "BRAZIL VALE DA GRAMA",
+      "image": "https://bgijvwneyxrgrugxeyor.supabase.co/storage/v1/object/public/product-images/1786953084053-b0c392ff-8cbf-4eb1-b430-512d514bf49d.png"
+    },
+    {
+      "id": 9,
+      "name": "COLOMBIA LA PLATA",
+      "image": "https://bgijvwneyxrgrugxeyor.supabase.co/storage/v1/object/public/product-images/1786953820624-a819756c-f5e9-42fd-af71-c936f194853f.png"
+    },
+    {
+      "id": 8,
+      "name": "Medium Turkish coffee",
+      "image": "https://bgijvwneyxrgrugxeyor.supabase.co/storage/v1/object/public/product-images/1783280001017-953ecee0-1e3d-4afc-b06a-9a9acceb1acf.png"
+    },
+    {
+      "id": 7,
+      "name": "CARDAMOM MEDIUM ROAST",
+      "image": "https://bgijvwneyxrgrugxeyor.supabase.co/storage/v1/object/public/product-images/1783279916085-5b259b7a-b68f-4300-a624-df815cb9a784.png"
+    },
+    {
+      "id": 6,
+      "name": "Dark Roast Turkish Coffee",
+      "image": "https://bgijvwneyxrgrugxeyor.supabase.co/storage/v1/object/public/product-images/1783279805494-8b3091a4-3f3c-4e2c-8ca4-f9c17d62a415.png"
+    },
+    {
+      "id": 5,
+      "name": "Cardamom DARK ROAST",
+      "image": "https://bgijvwneyxrgrugxeyor.supabase.co/storage/v1/object/public/product-images/1783280114099-770a7f4a-ec61-434f-9269-f57caf65184f.png"
+    },
+    {
+      "id": 4,
+      "name": "The Twins Coffee® Thermal Mug",
+      "image": "https://bgijvwneyxrgrugxeyor.supabase.co/storage/v1/object/public/product-images/1781545386996-2f41e4d6-737b-4d0c-8b1e-3809c0aeca5c.jpeg"
+    }
+  ]
+}
