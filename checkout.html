@@ -376,12 +376,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         }).join('\n');
       }
 
+      const custEmail = (order.customer && order.customer.email && order.customer.email.includes('@'))
+        ? order.customer.email.trim()
+        : 'thetwinseg@gmail.com';
+
       const templateParams = {
+        to_email: 'thetwinseg@gmail.com',
+        to_name: 'The Twins Coffee',
+        recipient: 'thetwinseg@gmail.com',
+        email: custEmail,
+        user_email: custEmail,
+        reply_to: custEmail,
+        from_name: order.customer ? order.customer.name : 'Store Customer',
+        from_email: custEmail,
         order_id: order.id,
         order_number: order.id,
         customer_name: order.customer ? order.customer.name : 'Customer',
         customer_phone: order.customer ? order.customer.phone : '',
-        customer_email: order.customer ? order.customer.email : '',
+        customer_email: custEmail,
         customer_address: order.customer ? order.customer.address : '',
         city: (order.customer ? order.customer.city : '') || '',
         shipping_name: order.shipping ? order.shipping.name : 'Standard Delivery',
@@ -392,8 +404,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         payment_method: order.paymentMethod === 'cod' ? 'Cash on Delivery (الدفع عند الاستلام)' : (order.paymentMethod || 'COD'),
         order_items: itemsFormatted,
         items: itemsFormatted,
-        message: `طلب جديد رقم #${order.id}\nالاسم: ${order.customer ? order.customer.name : ''}\nالهاتف: ${order.customer ? order.customer.phone : ''}\nالعنوان: ${order.customer ? order.customer.address : ''}, ${order.customer ? order.customer.city : ''}\n\nالمنتجات:\n${itemsFormatted}\n\nالإجمالي: ${order.total} جنيه\nطريقة الدفع: ${order.paymentMethod || 'COD'}`,
-        to_email: 'thetwinseg@gmail.com'
+        message: `طلب جديد رقم #${order.id}\nالاسم: ${order.customer ? order.customer.name : ''}\nالهاتف: ${order.customer ? order.customer.phone : ''}\nالعنوان: ${order.customer ? order.customer.address : ''}, ${order.customer ? order.customer.city : ''}\n\nالمنتجات:\n${itemsFormatted}\n\nالإجمالي: ${order.total} جنيه\nطريقة الدفع: ${order.paymentMethod || 'COD'}`
       };
 
       const res = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams, EMAILJS_PUBLIC_KEY);
