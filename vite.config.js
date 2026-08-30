@@ -9,7 +9,10 @@ export default defineConfig({
         { src: 'src/js', dest: '' },
         { src: '*.jpeg', dest: '' },
         { src: '*.png', dest: '' },
-        { src: '*.ico', dest: '' }
+        { src: '*.ico', dest: '' },
+        { src: 'sitemap.xml', dest: '' },
+        { src: 'robots.txt', dest: '' },
+        { src: 'google*.html', dest: '' }
       ]
     })
   ],
