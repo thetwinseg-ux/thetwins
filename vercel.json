@@ -1,21 +1,20 @@
 ﻿{
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    { "source": "/products", "destination": "/products.html" },
+    { "source": "/product-detail", "destination": "/product-detail.html" },
+    { "source": "/checkout", "destination": "/checkout.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/setup", "destination": "/setup.html" }
+  ],
   "redirects": [
-    {
-      "source": "/index.html",
-      "destination": "/",
-      "permanent": true
-    },
-    {
-      "source": "/index",
-      "destination": "/",
-      "permanent": true
-    },
-    {
-      "source": "/:path*.html",
-      "destination": "/:path*",
-      "permanent": true
-    }
+    { "source": "/index.html", "destination": "/", "permanent": true },
+    { "source": "/index", "destination": "/", "permanent": true },
+    { "source": "/products.html", "destination": "/products", "permanent": true },
+    { "source": "/product-detail.html", "destination": "/product-detail", "permanent": true },
+    { "source": "/checkout.html", "destination": "/checkout", "permanent": true },
+    { "source": "/admin.html", "destination": "/admin", "permanent": true },
+    { "source": "/setup.html", "destination": "/setup", "permanent": true }
   ]
 }
