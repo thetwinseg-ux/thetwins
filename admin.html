@@ -827,14 +827,16 @@ function getVariantImagesData() {
 function renderSizeRows(sizes) {
   const wrap = document.getElementById('m-size-rows');
   wrap.innerHTML = '';
-  sizes.forEach((sz, i) => {
+  (sizes || []).forEach((sz, i) => {
     const row = document.createElement('div');
     row.className = 'size-row';
+    const currentStock = (sz.stock !== undefined && sz.stock !== null && !isNaN(sz.stock)) ? sz.stock : 0;
     row.innerHTML = `
       <span class="size-row-lbl">#${i+1}</span>
-      <div class="fg"><input type="text" placeholder="Label" value="${sz.label}" data-field="label" data-idx="${i}" aria-label="Size label ${i+1}" name="size-label-${i}"/></div>
-      <div class="fg"><input type="number" placeholder="Price" value="${sz.price}" min="0" data-field="price" data-idx="${i}" aria-label="Size price ${i+1}" name="size-price-${i}"/></div>
-      <div class="fg"><input type="number" placeholder="Stock" value="${sz.stock}" min="0" data-field="stock" data-idx="${i}" aria-label="Size stock ${i+1}" name="size-stock-${i}"/></div>
+      <input type="hidden" data-field="id" value="${sz.id || ''}"/>
+      <div class="fg"><input type="text" placeholder="Label" value="${sz.label || ''}" data-field="label" data-idx="${i}" aria-label="Size label ${i+1}" name="size-label-${i}"/></div>
+      <div class="fg"><input type="number" placeholder="Price" value="${sz.price || 0}" min="0" data-field="price" data-idx="${i}" aria-label="Size price ${i+1}" name="size-price-${i}"/></div>
+      <div class="fg"><input type="number" placeholder="Stock" value="${currentStock}" min="0" data-field="stock" data-idx="${i}" aria-label="Size stock ${i+1}" name="size-stock-${i}"/></div>
       <button onclick="this.closest('.size-row').remove()" style="color:var(--red);font-size:1rem;padding:.25rem;cursor:pointer">✕</button>`;
     wrap.appendChild(row);
   });
@@ -842,17 +844,27 @@ function renderSizeRows(sizes) {
 
 document.getElementById('add-size-btn').addEventListener('click', () => {
   const sizes = getSizeRowsData();
-  sizes.push({ label:'', price:0, stock:0 });
+  sizes.push({ id: null, label:'', price:0, stock:0 });
   renderSizeRows(sizes);
 });
 
 function getSizeRowsData() {
   const rows = document.querySelectorAll('#m-size-rows .size-row');
-  return Array.from(rows).map(row => ({
-    label: row.querySelector('[data-field="label"]').value.trim(),
-    price: parseFloat(row.querySelector('[data-field="price"]').value) || 0,
-    stock: parseInt(row.querySelector('[data-field="stock"]').value) || 0,
-  }));
+  return Array.from(rows).map(row => {
+    const idInput = row.querySelector('[data-field="id"]');
+    const idVal = idInput && idInput.value ? parseInt(idInput.value, 10) : null;
+    const labelVal = row.querySelector('[data-field="label"]')?.value.trim() || 'Standard';
+    const priceVal = parseFloat(row.querySelector('[data-field="price"]')?.value) || 0;
+    const stockRaw = row.querySelector('[data-field="stock"]')?.value;
+    const stockVal = stockRaw !== '' && stockRaw !== undefined ? parseInt(stockRaw, 10) : 0;
+
+    return {
+      id: idVal,
+      label: labelVal,
+      price: priceVal,
+      stock: isNaN(stockVal) ? 0 : Math.max(0, stockVal)
+    };
+  });
 }
 
 /* ══ Save product (API) ══ */

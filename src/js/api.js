@@ -182,7 +182,13 @@ async function apiAddProduct(productData) {
   if (error) throw error;
 
   if (sizes.length > 0) {
-    const sizesToInsert = sizes.map((s, index) => ({ ...s, product_id: data.id, sort_order: index }));
+    const sizesToInsert = sizes.map((s, index) => ({
+      product_id: data.id,
+      label: s.label || 'Standard',
+      price: parseFloat(s.price) || 0,
+      stock: parseInt(s.stock, 10) >= 0 ? parseInt(s.stock, 10) : 0,
+      sort_order: index
+    }));
     const { error: sizeErr } = await supabaseClient.from('product_sizes').insert(sizesToInsert);
     if (sizeErr) throw sizeErr;
   }
@@ -200,33 +206,72 @@ async function apiUpdateProduct(id, updates) {
   const { data, error } = await supabaseClient.from('products').update(updates).eq('id', id).select().single();
   if (error) throw error;
 
-  if (sizes) {
-    // Delete old sizes and insert new ones
-    await supabaseClient.from('product_sizes').delete().eq('product_id', id);
-    if (sizes.length > 0) {
-      const sizesToInsert = sizes.map((s, index) => {
-        const { id: _localId, ...sizeData } = s; // Remove local id if any
-        return { ...sizeData, product_id: id, sort_order: index };
-      });
-      const { error: sizeErr } = await supabaseClient.from('product_sizes').insert(sizesToInsert);
-      if (sizeErr) throw sizeErr;
+  if (sizes && Array.isArray(sizes)) {
+    // 1. Fetch existing sizes for this product
+    const { data: existingSizes } = await supabaseClient.from('product_sizes').select('*').eq('product_id', id).order('id', { ascending: true });
+    const existingList = existingSizes || [];
+    const existingIds = existingList.map(s => s.id);
+    const keptIds = [];
+
+    for (let index = 0; index < sizes.length; index++) {
+      const s = sizes[index];
+      const stockVal = (s.stock !== undefined && s.stock !== null && !isNaN(parseInt(s.stock, 10))) ? parseInt(s.stock, 10) : 0;
+      const priceVal = parseFloat(s.price) || 0;
+      const labelVal = s.label ? s.label.trim() : 'Standard';
+
+      if (s.id && existingIds.includes(s.id)) {
+        // Update existing row by ID
+        keptIds.push(s.id);
+        const { error: uErr } = await supabaseClient.from('product_sizes').update({
+          label: labelVal,
+          price: priceVal,
+          stock: stockVal,
+          sort_order: index
+        }).eq('id', s.id);
+        if (uErr) console.warn('Error updating size:', uErr);
+      } else if (existingList[index]) {
+        // Match by position if ID wasn't attached
+        const matched = existingList[index];
+        keptIds.push(matched.id);
+        const { error: uErr } = await supabaseClient.from('product_sizes').update({
+          label: labelVal,
+          price: priceVal,
+          stock: stockVal,
+          sort_order: index
+        }).eq('id', matched.id);
+        if (uErr) console.warn('Error updating size by index:', uErr);
+      } else {
+        // Insert new size row
+        const { data: newRow, error: iErr } = await supabaseClient.from('product_sizes').insert([{
+          product_id: id,
+          label: labelVal,
+          price: priceVal,
+          stock: stockVal,
+          sort_order: index
+        }]).select().single();
+        if (!iErr && newRow) keptIds.push(newRow.id);
+      }
+    }
+
+    // Delete any removed sizes
+    const toDelete = existingIds.filter(eid => !keptIds.includes(eid));
+    if (toDelete.length > 0) {
+      await supabaseClient.from('product_sizes').delete().in('id', toDelete);
     }
   }
 
   if (colors !== undefined) {
-    // Delete old colors and insert new ones
     await supabaseClient.from('product_colors').delete().eq('product_id', id);
     if (colors.length > 0) {
       const colorsToInsert = colors.map((c, index) => {
         const { id: _localId, ...colorData } = c;
         return { ...colorData, product_id: id, sort_order: index };
       });
-      const { error: colErr } = await supabaseClient.from('product_colors').insert(colorsToInsert);
-      if (colErr) throw colErr;
+      await supabaseClient.from('product_colors').insert(colorsToInsert);
     }
   }
 
-  return await apiGetProductById(data.id);
+  return await apiGetProductById(id);
 }
 
 async function apiDeleteProduct(id) {
@@ -253,7 +298,8 @@ async function apiCreateOrder(orderData) {
     shipping_price: orderData.shippingPrice,
     subtotal: orderData.subtotal,
     total: orderData.total,
-    status: 'pending'
+    status: 'pending',
+    payment_method: orderData.paymentMethod || 'cod'
   };
   
   const { error } = await supabaseClient.from('orders').insert([payload]);
@@ -261,6 +307,35 @@ async function apiCreateOrder(orderData) {
     console.error('Order creation failed:', error);
     throw error;
   }
+
+  // ── Automatically deduct stock for ordered items ──
+  if (Array.isArray(orderData.items)) {
+    for (const item of orderData.items) {
+      const qtyToDeduct = parseInt(item.qty || item.quantity || 1, 10);
+      if (qtyToDeduct <= 0) continue;
+
+      try {
+        if (item.sizeId) {
+          const { data: sizeRow } = await supabaseClient.from('product_sizes').select('id, stock').eq('id', item.sizeId).maybeSingle();
+          if (sizeRow) {
+            const newStock = Math.max(0, (sizeRow.stock || 0) - qtyToDeduct);
+            await supabaseClient.from('product_sizes').update({ stock: newStock }).eq('id', item.sizeId);
+          }
+        } else if (item.productId) {
+          const { data: pSizes } = await supabaseClient.from('product_sizes').select('id, stock, label').eq('product_id', item.productId);
+          if (pSizes && pSizes.length > 0) {
+            const matched = (item.size ? pSizes.find(s => s.label === item.size) : null) || pSizes[0];
+            const newStock = Math.max(0, (matched.stock || 0) - qtyToDeduct);
+            await supabaseClient.from('product_sizes').update({ stock: newStock }).eq('id', matched.id);
+          }
+        }
+      } catch (stockErr) {
+        console.warn('Stock deduction notice for item:', item, stockErr);
+      }
+    }
+  }
+
+  _bustCache('products');
   return payload;
 }
 async function apiGetOrders() {
@@ -325,8 +400,14 @@ const apiCreateShipping = apiAddShippingOption;
 const apiPlaceOrder = apiCreateOrder;
 
 async function apiUpdateStock(pid, sizeId, newStock) {
+  _bustCache('products');
+  const cleanStock = Math.max(0, parseInt(newStock, 10) || 0);
+  if (sizeId) {
+    const { error } = await supabaseClient.from('product_sizes').update({ stock: cleanStock }).eq('id', sizeId);
+    if (!error) return { success: true };
+  }
   const product = await apiGetProductById(pid);
-  const sizes = product.sizes.map(s => s.id === sizeId ? { ...s, stock: newStock } : s);
+  const sizes = (product.sizes || []).map(s => (s.id === sizeId || !sizeId) ? { ...s, stock: cleanStock } : s);
   return apiUpdateProduct(pid, { sizes });
 }
 
