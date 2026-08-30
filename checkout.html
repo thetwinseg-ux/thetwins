@@ -178,6 +178,7 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="./src/js/api.js"></script>
 <script src="./src/js/app.js"></script>
 <script>
@@ -352,6 +353,57 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
+  // ── EmailJS Configuration ──
+  const EMAILJS_SERVICE_ID = 'service_azkpyi2';
+  const EMAILJS_TEMPLATE_ID = 'template_z45ws9k';
+  const EMAILJS_PUBLIC_KEY = '9e2yOAR_XiDnAldHk';
+
+  try {
+    if (typeof emailjs !== 'undefined') {
+      emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+    }
+  } catch(e) { console.warn('EmailJS init warning:', e); }
+
+  async function sendOrderNotificationEmail(order) {
+    try {
+      if (typeof emailjs === 'undefined') return;
+
+      let itemsFormatted = '';
+      if (order.items && order.items.length) {
+        itemsFormatted = order.items.map(item => {
+          const opts = [item.size, item.type, item.roast].filter(Boolean).join(' · ');
+          return `• ${item.name} (${opts || 'Standard'}) x ${item.qty} = ${(item.price * item.qty)} EGP`;
+        }).join('\n');
+      }
+
+      const templateParams = {
+        order_id: order.id,
+        order_number: order.id,
+        customer_name: order.customer ? order.customer.name : 'Customer',
+        customer_phone: order.customer ? order.customer.phone : '',
+        customer_email: order.customer ? order.customer.email : '',
+        customer_address: order.customer ? order.customer.address : '',
+        city: (order.customer ? order.customer.city : '') || '',
+        shipping_name: order.shipping ? order.shipping.name : 'Standard Delivery',
+        shipping_price: (order.shipping ? order.shipping.price : 0) + ' EGP',
+        subtotal: (order.subtotal || 0) + ' EGP',
+        total: (order.total || 0) + ' EGP',
+        total_price: (order.total || 0) + ' EGP',
+        payment_method: order.paymentMethod === 'cod' ? 'Cash on Delivery (الدفع عند الاستلام)' : (order.paymentMethod || 'COD'),
+        order_items: itemsFormatted,
+        items: itemsFormatted,
+        message: `طلب جديد رقم #${order.id}\nالاسم: ${order.customer ? order.customer.name : ''}\nالهاتف: ${order.customer ? order.customer.phone : ''}\nالعنوان: ${order.customer ? order.customer.address : ''}, ${order.customer ? order.customer.city : ''}\n\nالمنتجات:\n${itemsFormatted}\n\nالإجمالي: ${order.total} جنيه\nطريقة الدفع: ${order.paymentMethod || 'COD'}`,
+        to_email: 'thetwinseg@gmail.com'
+      };
+
+      const res = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams, EMAILJS_PUBLIC_KEY);
+      console.log('Order notification email sent successfully:', res);
+      return res;
+    } catch (err) {
+      console.warn('EmailJS sending failed (non-blocking):', err);
+    }
+  }
+
   // Place order
   function getWhatsAppLink(o) {
     const phone = typeof WHATSAPP_PHONE !== 'undefined' ? WHATSAPP_PHONE : "201066996287";
@@ -390,7 +442,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       customer: { name: fname+' '+document.getElementById('f-lname').value.trim(), phone, email:document.getElementById('f-email').value.trim(), address:addr, city:cityText, zip:document.getElementById('f-zip').value.trim() },
       items: cart,
       shipping: ship ? {name:ship.name,name_ar:ship.name_ar,price:ship.price,days:ship.days} : null,
-      subtotal:sub, total, status:'pending'
+      subtotal:sub, total, status:'pending', paymentMethod
     };
     const apiPayload = {
       id:order.id, customerName:order.customer.name, customerPhone:order.customer.phone,
@@ -401,6 +453,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
     try { 
       const res = await apiCreateOrder(apiPayload); 
+
+      // Send Email notification to store owner
+      sendOrderNotificationEmail(order);
+
       cartClear();
       document.getElementById('co-main').classList.add('hidden');
       document.getElementById('co-success').classList.remove('hidden');
