@@ -2,6 +2,20 @@
 //  THE TWINS COFFEE® — Shared App Logic v4 (Luxury Edition)
 // ============================================================
 
+// ── Clean URL Handler (Instantly strips index.html and .html for clean luxury brand URLs) ──
+(function() {
+  try {
+    const p = window.location.pathname;
+    if (p.endsWith('/index.html') || p === '/index.html' || p === 'index.html') {
+      const cleanPath = p.replace(/\/index\.html$/, '/').replace(/^\/?index\.html$/, '/') || '/';
+      window.history.replaceState(null, '', cleanPath + window.location.search + window.location.hash);
+    } else if (p.endsWith('.html')) {
+      const cleanPath = p.replace(/\.html$/, '');
+      window.history.replaceState(null, '', cleanPath + window.location.search + window.location.hash);
+    }
+  } catch(e) {}
+})();
+
 /* ─────────────── Default Data ─────────────── */
 const DEFAULT_PRODUCTS = [];
 
