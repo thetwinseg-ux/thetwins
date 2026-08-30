@@ -292,14 +292,13 @@ async function apiCreateOrder(orderData) {
     customer_address: orderData.customerAddress,
     city: orderData.city,
     items: orderData.items,
-    shipping_id: orderData.shippingId,
-    shipping_name: orderData.shippingName,
-    notes: orderData.notes,
-    shipping_price: orderData.shippingPrice,
-    subtotal: orderData.subtotal,
-    total: orderData.total,
-    status: 'pending',
-    payment_method: orderData.paymentMethod || 'cod'
+    shipping_id: orderData.shippingId || null,
+    shipping_name: orderData.shippingName || '',
+    notes: orderData.notes || (orderData.paymentMethod ? `Payment: ${orderData.paymentMethod}` : ''),
+    shipping_price: orderData.shippingPrice || 0,
+    subtotal: orderData.subtotal || 0,
+    total: orderData.total || 0,
+    status: 'pending'
   };
   
   const { error } = await supabaseClient.from('orders').insert([payload]);
